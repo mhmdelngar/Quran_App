@@ -5,10 +5,10 @@ A new Flutter application.
 ## Getting Started
 
 
-Quran App (Flutter+ bloc)
-Api
-AudioPlayrs
-notification
+Quran App (Flutter+ bloc)+
+Api+
+AudioPlayrs+
+notification+
 complex ui
 
 ![quran_listienning](/screenShots/Screenshot_20201130_184436.png)
