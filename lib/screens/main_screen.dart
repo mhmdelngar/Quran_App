@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:move_to_background/move_to_background.dart';
 import 'package:quran_listienning/bloc/main/main_screen_bloc.dart';
 import 'package:quran_listienning/data/models/ayah.dart';
 import 'package:quran_listienning/data/models/azkar.dart';
@@ -264,99 +265,104 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Color(0xFFFFF2F2),
-      body: SafeArea(
-        child: Column(
-          children: [
-            appBar(context),
-            buildMood(),
-            SizedBox(
-              height: 24,
-            ),
-            Flexible(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(
-                      40,
-                    ),
-                    topRight: Radius.circular(40),
-                  ),
+    return WillPopScope(
+        onWillPop: () async {
+          MoveToBackground.moveTaskToBack();
+          return false;
+        },
+        child: Scaffold(
+          backgroundColor: Color(0xFFFFF2F2),
+          body: SafeArea(
+            child: Column(
+              children: [
+                appBar(context),
+                buildMood(),
+                SizedBox(
+                  height: 24,
                 ),
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: DefaultTabController(
-                        initialIndex: 0,
-                        length: 2,
-                        child: TabBar(
-                          indicatorColor: Colors.pinkAccent[100],
-                          labelColor: Colors.pinkAccent[100],
-                          indicatorWeight: 0.5,
-                          unselectedLabelColor: Colors.grey[400],
-                          // controller: DefaultTabController(),
-                          onTap: (i) {
-                            onTap(i, context);
-                          },
-                          tabs: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                'َقــران',
-                              ),
-                            ),
-                            Text(
-                              'أذكار',
-                            ),
-                          ],
+                Flexible(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(
+                          40,
                         ),
+                        topRight: Radius.circular(40),
                       ),
                     ),
-                    BlocConsumer<MainScreenBloc, MainScreenState>(
-                        listener: (ctx, state) {
-                      if (state is NavigateToGetData) {
-                        print('object1');
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (ctx) {
-                              return ChooseSura(
-                                id: state.id,
-                              );
-                            },
+                    width: double.infinity,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: DefaultTabController(
+                            initialIndex: 0,
+                            length: 2,
+                            child: TabBar(
+                              indicatorColor: Colors.pinkAccent[100],
+                              labelColor: Colors.pinkAccent[100],
+                              indicatorWeight: 0.5,
+                              unselectedLabelColor: Colors.grey[400],
+                              // controller: DefaultTabController(),
+                              onTap: (i) {
+                                onTap(i, context);
+                              },
+                              tabs: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    'َقــران',
+                                  ),
+                                ),
+                                Text(
+                                  'أذكار',
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                      }
-                    }, builder: (context, state) {
-                      if (state is MainScreenInitial) {
-                        onTap(0, context);
-                        return Center(child: CircularProgressIndicator());
-                      } else if (state is MainScreenLoading) {
-                        return Center(child: CircularProgressIndicator());
-                      } else if (state is MainScreenAzkar) {
-                        return azkarBuild(state.azkarData);
-                      } else if (state is MainScreenQuran) {
-                        return quranBuild(state.items, state.ayaItems);
-                      } else if (state is MainScreenError) {
-                        return Center(
-                          child: Text('error'),
-                        );
-                      } else {
-                        onTap(0, context);
-                        return Container();
-                      }
-                    })
-                  ],
+                        ),
+                        BlocConsumer<MainScreenBloc, MainScreenState>(
+                            listener: (ctx, state) {
+                          if (state is NavigateToGetData) {
+                            print('object1');
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) {
+                                  return ChooseSura(
+                                    id: state.id,
+                                  );
+                                },
+                              ),
+                            );
+                          }
+                        }, builder: (context, state) {
+                          if (state is MainScreenInitial) {
+                            onTap(0, context);
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is MainScreenLoading) {
+                            return Center(child: CircularProgressIndicator());
+                          } else if (state is MainScreenAzkar) {
+                            return azkarBuild(state.azkarData);
+                          } else if (state is MainScreenQuran) {
+                            return quranBuild(state.items, state.ayaItems);
+                          } else if (state is MainScreenError) {
+                            return Center(
+                              child: Text('error'),
+                            );
+                          } else {
+                            onTap(0, context);
+                            return Container();
+                          }
+                        })
+                      ],
+                    ),
+                  ),
                 ),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 }
