@@ -31,7 +31,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
     BlocProvider.of<ListenBloc>(context).add(ChangePosition(newValue: value));
   }
 
-  Widget swiper(
+  Widget contentDetail(
     Data data,
   ) {
     return Container(
@@ -56,7 +56,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                   borderRadius: BorderRadius.circular(20),
                   child: Container(
                     height: MediaQuery.of(context).size.height * .17,
-                    width: 150,
+                    width: MediaQuery.of(context).size.width * .36,
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Image.network(
@@ -228,7 +228,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
     return Column(
       children: [
         // appBar(context),
-        swiper(data),
+        contentDetail(data),
         controlInSound(
             isOn: isOn,
             position: position,
@@ -280,7 +280,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
       body: BlocBuilder<ListenBloc, ListenState>(
         builder: (ctx, state) {
           if (state is ListenInitial) {
-            return Center(child: Text('intial'));
+            return Center(child: Text('initial'));
           }
           if (state is ListenLoading) {
             return Text('loading');
@@ -292,23 +292,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                 isOn: state.isOn,
                 data: state.data,
                 context: ctx);
-          } else if (state is ListenResume) {
-            return loaded(
-                sliderValue: state.sliderValue,
-                sliderValue1: state.sliderValue1,
-                position: state.position,
-                isOn: state.isOn,
-                data: state.data,
-                context: ctx);
-          } else if (state is ListenNextSura) {
-            return loaded(
-                sliderValue1: null,
-                isOn: true,
-                position: Duration.zero,
-                sliderValue: 0,
-                context: ctx);
-          }
-          if (state is ErrorInListen) {
+          } else if (state is ErrorInListen) {
             return Container(
               child: Center(
                 child: RaisedButton(

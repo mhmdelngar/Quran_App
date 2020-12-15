@@ -20,6 +20,7 @@ import 'package:quran_listienning/widgets/sheikh_container.dart';
 
 import '../searchBar.dart';
 import 'choose_sura.dart';
+import 'drawer.dart';
 
 class MyHomePage extends StatelessWidget {
   List<Data> ayaItemsData = [];
@@ -83,6 +84,30 @@ class MyHomePage extends StatelessWidget {
     );
   }
 
+  randomlyAyah(BuildContext context, int index) {
+    ayaItemsData.clear();
+    Random random = Random();
+    for (int i = 0; i < 5; i++) {
+      final int randomNumber = random.nextInt(6236);
+      ayaItemsData.add(
+        Data(
+            link:
+                'http://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/$randomNumber/high',
+            sora: 'ارح قلبك ',
+            id: randomNumber.toString(),
+            readerName: 'مشاري العفاسي '),
+      );
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (
+          context,
+        ) =>
+            Listen(ayaItemsData, null, index),
+      ),
+    );
+  } //generate 5 random ayat
+
   Widget buildMood() {
     return Column(
       children: [
@@ -103,33 +128,12 @@ class MyHomePage extends StatelessWidget {
                 return Row(
                   children: [
                     GestureDetector(
-                      child: MoodUi(
-                        imageNumber: index + 1,
-                      ),
-                      onTap: () {
-                        ayaItemsData.clear();
-                        Random random = Random();
-                        for (int i = 0; i < 5; i++) {
-                          final int randomNumber = random.nextInt(6236);
-                          ayaItemsData.add(
-                            Data(
-                                link:
-                                    'http://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/$randomNumber/high',
-                                sora: 'ارح قلبك ',
-                                id: randomNumber.toString(),
-                                readerName: 'مشاري العفاسي '),
-                          );
-                        }
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (
-                              context,
-                            ) =>
-                                Listen(ayaItemsData, null, index),
-                          ),
-                        );
-                      },
-                    ),
+                        child: MoodUi(
+                          imageNumber: index + 1,
+                        ),
+                        onTap: () {
+                          randomlyAyah(context, index);
+                        }),
                     SizedBox(
                       width: 24,
                     )
@@ -216,7 +220,6 @@ class MyHomePage extends StatelessWidget {
   }
 
   Widget azkarBuild(AzkarData azkarData) {
-    print(azkarData.items[1].readerImg);
     return Expanded(
       child: AnimationLimiter(
         child: GridView.builder(
@@ -326,7 +329,7 @@ class MyHomePage extends StatelessWidget {
   }
 
   toNavigate(int id, BuildContext context) {
-    BlocProvider.of<MainScreenBloc>(context).add(NavigteTo(id));
+    BlocProvider.of<MainScreenBloc>(context).add(NavigateTo(id));
   }
 
   @override
@@ -337,42 +340,7 @@ class MyHomePage extends StatelessWidget {
           return false;
         },
         child: Scaffold(
-          drawer: Drawer(
-            child: ListView(
-              children: [
-                DrawerHeader(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'images/quran_icon.png',
-                        width: 70,
-                        height: 80,
-                      ),
-                      Text('قرآ نـــي')
-                    ],
-                  ),
-                  decoration: BoxDecoration(color: Colors.white),
-                ),
-                ListTile(
-                  onTap: () {
-                    // Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => AboutScreen(),
-                      ),
-                    );
-                  },
-                  title: Text(
-                    'حول البرنامج',
-                    textDirection: TextDirection.rtl,
-                  ),
-                  leading: Icon(Icons.all_inclusive_outlined),
-                )
-              ],
-            ),
-          ),
+          drawer: DrawerScreen(),
           backgroundColor: Color(0xFFFFF2F2),
           body: SafeArea(
             child: Column(

@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -10,21 +8,6 @@ class ShikhContainer extends StatelessWidget {
   final Function onTap;
 
   const ShikhContainer({this.title, this.imageUrl, this.id, this.onTap});
-  ImageProvider buildPhoto() {
-    try {
-      final photo = NetworkImage(imageUrl);
-      if (photo is SocketException) {
-        print('entered');
-        return AssetImage('images/musical-note.png');
-      }
-      return photo;
-    } on SocketException catch (e) {
-      print(e);
-      return AssetImage('images/musical-note.png');
-    } catch (e) {
-      return AssetImage('images/musical-note.png');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +29,7 @@ class ShikhContainer extends StatelessWidget {
           padding: const EdgeInsets.all(10.0),
           child: CircleAvatar(
             backgroundColor: Colors.white,
-            backgroundImage: buildPhoto(),
+            backgroundImage: NetworkImage(imageUrl),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [

@@ -23,9 +23,14 @@ class _ChooseSuraState extends State<ChooseSura> {
 
   navigateToListen(Quran quran, int index, BuildContext context) {
     focusNode.unfocus(); //so you can hide keyboard before navigate
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return Listen(quran.data, widget.id, index);
-    }));
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return Listen(quran.data, widget.id, index);
+        },
+      ),
+    );
   }
 
   Widget _searchAddList(Quran quran, List<Data> _searchListItems) {
@@ -88,20 +93,25 @@ class _ChooseSuraState extends State<ChooseSura> {
               child: TextField(
                 focusNode: focusNode,
                 decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.white),
-                      borderRadius: BorderRadius.circular(50),
+                  border: OutlineInputBorder(
+                    borderSide: BorderSide(color: Colors.white),
+                    borderRadius: BorderRadius.circular(
+                      50,
                     ),
-                    filled: true,
-                    fillColor: Colors.white,
-                    hintText: 'ادخل اسم سوره',
-                    hintStyle: TextStyle(color: Colors.grey),
-                    // enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    suffixIcon: Icon(
-                      Icons.search,
-                      color: Colors.black,
-                    )),
+                  ),
+                  filled: true,
+                  fillColor: Colors.white,
+                  hintText: 'ادخل اسم سوره',
+                  hintStyle: TextStyle(
+                    color: Colors.grey,
+                  ),
+                  // enabledBorder: InputBorder.none,
+                  focusedBorder: InputBorder.none,
+                  suffixIcon: Icon(
+                    Icons.search,
+                    color: Colors.black,
+                  ),
+                ),
                 textAlign: TextAlign.right,
                 controller: _controller,
                 style: TextStyle(fontSize: 15),
@@ -154,7 +164,7 @@ class _ChooseSuraState extends State<ChooseSura> {
 
   @override
   void dispose() {
-    _controller.clear();
+    _controller.clear(); //reset state so you can search again
 
     focusNode.dispose();
     _controller.dispose();

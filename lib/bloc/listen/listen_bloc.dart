@@ -20,7 +20,7 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     ListenEvent event,
   ) async* {
     if (event is PlayAudio) {
-      Duration s;
+      Duration currentPosition;
       yield ListenLoaded(
           isOn: audioRepo.isOn,
           position: Duration.zero,
@@ -30,14 +30,13 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
 
       await audioRepo.playAudio(event.data, event.index);
 
-      audioRepo.player.currentPosition.listen((p) {
-        s = p;
-        add(Triger(p));
-      });
-      //to make time moving
+      audioRepo.player.currentPosition.listen((position) {
+        currentPosition = position;
+        add(Triger(position));
+      }); //to make time moving
       audioRepo.player.isPlaying.listen((event) {
         if (event == false) {
-          add(Triger(s));
+          add(Triger(currentPosition));
         }
       });
     }
@@ -45,7 +44,7 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     if (event is Triger) {
       yield ListenLoaded(
           isOn: audioRepo.isOn,
-          position: event.d,
+          position: event.position,
           sliderValue1: audioRepo.sliderValueOnText,
           sliderValue: audioRepo.sliderValue,
           data: audioRepo.quranData);
@@ -59,7 +58,7 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
           sliderValue1: audioRepo.sliderValueOnText,
           sliderValue: audioRepo.sliderValue,
           data: audioRepo.quranData);
-    }
+    } //pause Audio
     if (event is NextSura) {
       yield ListenLoaded(
           isOn: audioRepo.isOn,

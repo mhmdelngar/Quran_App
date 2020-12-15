@@ -14,8 +14,8 @@ class ChangeToQuran extends MainScreenEvent {
   List<Object> get props => throw UnimplementedError();
 }
 
-class NavigteTo extends MainScreenEvent {
+class NavigateTo extends MainScreenEvent {
   final int id;
-  const NavigteTo(this.id);
-  List<Object> get props => throw UnimplementedError();
+  const NavigateTo(this.id);
+  List<Object> get props => [id];
 }

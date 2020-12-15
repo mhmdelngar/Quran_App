@@ -33,11 +33,12 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       List<Ayah> ayaItems = dataRepo.ayaItems;
       yield MainScreenQuran(items, ayaItems);
     }
-    if (event is NavigteTo) {
+    if (event is NavigateTo) {
       yield NavigateToGetData(event.id);
       List<Sheikh> items = dataRepo.items;
       List<Ayah> ayaItems = dataRepo.ayaItems;
-      yield MainScreenQuran(items, ayaItems);
+      yield MainScreenQuran(
+          items, ayaItems); //to return the same state after navigate
     }
   }
 }

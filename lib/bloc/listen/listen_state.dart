@@ -11,13 +11,6 @@ class ListenInitial extends ListenState {
   List<Object> get props => [];
 }
 
-class ListenNextSura extends ListenState {
-  const ListenNextSura() : super();
-
-  @override
-  List<Object> get props => [];
-}
-
 class ListenLoading extends ListenState {
   @override
   List<Object> get props => [];
@@ -45,27 +38,6 @@ class ListenLoaded extends ListenState {
   List<Object> get props => [sliderValue1, isOn, position, this.data];
 
   const ListenLoaded(
-      {this.data,
-      this.sliderValue,
-      this.sliderValue1,
-      this.position,
-      this.isOn})
-      : super();
-}
-
-class ListenResume extends ListenState {
-  final double sliderValue;
-
-  final Duration sliderValue1;
-
-  final Duration position;
-  final bool isOn;
-  final Data data;
-
-  @override
-  List<Object> get props => [sliderValue, sliderValue1, isOn, position, data];
-
-  const ListenResume(
       {this.data,
       this.sliderValue,
       this.sliderValue1,
