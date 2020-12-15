@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quran_listienning/screens/choose_sura.dart';
 
-import 'data/sheikh.dart';
+import 'data/models/sheikh.dart';
 
 class DataSearch extends SearchDelegate<String> {
   final List<Sheikh> listSheikhs;

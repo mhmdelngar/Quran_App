@@ -15,13 +15,12 @@ class PlayAudio extends ListenEvent {
 }
 
 class Triger extends ListenEvent {
-  final Data data;
   final Duration d;
 
-  Triger(this.data, this.d);
+  Triger(this.d);
 
   @override
-  List<Object> get props => [data, d];
+  List<Object> get props => [d];
 }
 
 class PauseAudio extends ListenEvent {

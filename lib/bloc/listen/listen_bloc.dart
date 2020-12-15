@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:quran_listienning/data/audioRepo.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
+import 'package:quran_listienning/data/serviece/audioRepo.dart';
 
 part 'listen_event.dart';
 part 'listen_state.dart';
@@ -20,6 +20,7 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     ListenEvent event,
   ) async* {
     if (event is PlayAudio) {
+      Duration s;
       yield ListenLoaded(
           isOn: audioRepo.isOn,
           position: Duration.zero,
@@ -30,21 +31,22 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
       await audioRepo.playAudio(event.data, event.index);
 
       audioRepo.player.currentPosition.listen((p) {
-        add(Triger(event.data[event.index], p));
+        s = p;
+        add(Triger(p));
       });
       //to make time moving
-audioRepo.player.isPlaying.listen((event) {
-  if(event == false){
-    add(PauseAudio());
-  }
-});
+      audioRepo.player.isPlaying.listen((event) {
+        if (event == false) {
+          add(Triger(s));
+        }
+      });
     }
 
     if (event is Triger) {
       yield ListenLoaded(
           isOn: audioRepo.isOn,
           position: event.d,
-          sliderValue1: audioRepo.sliderValue1,
+          sliderValue1: audioRepo.sliderValueOnText,
           sliderValue: audioRepo.sliderValue,
           data: audioRepo.quranData);
     }
@@ -54,7 +56,7 @@ audioRepo.player.isPlaying.listen((event) {
       yield ListenLoaded(
           isOn: audioRepo.isOn,
           position: audioRepo.position,
-          sliderValue1: audioRepo.sliderValue1,
+          sliderValue1: audioRepo.sliderValueOnText,
           sliderValue: audioRepo.sliderValue,
           data: audioRepo.quranData);
     }

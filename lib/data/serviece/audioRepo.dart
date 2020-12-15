@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
 
-import 'models/quran_data.dart';
+import '../models/quran_data.dart';
 
 class AudioRepo {
   double sliderValue = 0;
-  Duration sliderValue1;
+  Duration sliderValueOnText;
   Duration position = Duration(seconds: 0);
   bool isOn = false;
   final AssetsAudioPlayer player;
@@ -35,24 +35,16 @@ class AudioRepo {
         loopMode: LoopMode.playlist,
         showNotification: true,
         headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
-        notificationSettings:
-            NotificationSettings(customPlayPauseAction: (asset) {
-          if (asset.isPlaying.value) {
-            pauseAudio();
-          } else {
-            onResume();
-          }
-        }),
       ); // time to play
       await player.playlistPlayAtIndex(index);
       player.playlistAudioFinished.listen((event) {
-        sliderValue1 = null;
+        sliderValueOnText = null;
         sliderValue = 0;
       });
       player.current.listen((event) {
         quranData = data[event.index];
-        sliderValue1 = player.current.value.audio.duration;
-        sliderValue = sliderValue1.inSeconds.toDouble();
+        sliderValueOnText = player.current.value.audio.duration;
+        sliderValue = sliderValueOnText.inSeconds.toDouble();
       });
 
       player.isPlaying.listen((event) {
@@ -60,8 +52,8 @@ class AudioRepo {
         isOn = event;
       });
 
-      sliderValue1 = player.current.value.audio.duration; //to get duration
-      sliderValue = sliderValue1.inSeconds.toDouble();
+      sliderValueOnText = player.current.value.audio.duration; //to get duration
+      sliderValue = sliderValueOnText.inSeconds.toDouble();
     } on HttpException catch (error) {
       print(error);
       throw error;

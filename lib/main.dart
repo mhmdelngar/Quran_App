@@ -11,8 +11,8 @@ import 'package:quran_listienning/screens/main_screen.dart';
 import 'bloc/chooseSura/choose_sura_bloc.dart';
 import 'bloc/listen/listen_bloc.dart';
 import 'bloc/main/main_screen_bloc.dart';
-import 'data/audioRepo.dart';
 import 'data/repo.dart';
+import 'data/serviece/audioRepo.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(

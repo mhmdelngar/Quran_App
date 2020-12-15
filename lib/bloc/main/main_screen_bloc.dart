@@ -4,8 +4,8 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:quran_listienning/data/models/ayah.dart';
 import 'package:quran_listienning/data/models/azkar.dart';
+import 'package:quran_listienning/data/models/sheikh.dart';
 import 'package:quran_listienning/data/repo.dart';
-import 'package:quran_listienning/data/sheikh.dart';
 
 part 'main_screen_event.dart';
 part 'main_screen_state.dart';

@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
-import 'package:quran_listienning/data/sheikh.dart';
 
 import 'models/ayah.dart';
 import 'models/azkar.dart';
 import 'models/quran_data.dart';
+import 'models/sheikh.dart';
 
 class DataRepo {
   getAllQuranData(int readerId) async {
