@@ -26,6 +26,9 @@ dependencies:
   assets_audio_player: ^2.0.13+1
   page_transition: ^1.1.7+2
   move_to_background: ^1.0.1
+  flutter_staggered_animations: ^0.1.2
+  url_launcher: ^5.7.10
+  font_awesome_flutter: ^8.10.1
 
 dev_dependencies:
   flutter_test:

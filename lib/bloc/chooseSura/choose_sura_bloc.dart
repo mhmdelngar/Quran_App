@@ -11,7 +11,6 @@ part 'choose_sura_state.dart';
 
 class ChooseSuraBloc extends Bloc<ChooseSuraEvent, ChooseSuraState> {
   final DataRepo dataRepo;
-  // static int readerId;
   ChooseSuraBloc({@required this.dataRepo})
       : assert(dataRepo != null),
         super(ChooseSuraInitial());

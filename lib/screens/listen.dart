@@ -31,69 +31,13 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
     BlocProvider.of<ListenBloc>(context).add(ChangePosition(newValue: value));
   }
 
-  Widget appBar(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          IconButton(
-              icon: Icon(
-                Icons.arrow_back,
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              }),
-          Text(
-            'Now playing',
-            style: TextStyle(fontSize: 16),
-          ),
-          PopupMenuButton(
-              onSelected: (i) {
-                print('try to select');
-                return Scaffold.of(
-                  context,
-                ).showBottomSheet((context) => Container(
-                      height: 500,
-                      color: Colors.amber,
-                      child: Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text('BottomSheet'),
-                            ElevatedButton(
-                              child: const Text('Close BottomSheet'),
-                              onPressed: () => Navigator.pop(context),
-                            )
-                          ],
-                        ),
-                      ),
-                    ));
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(
-                  15,
-                ),
-              ),
-              itemBuilder: (context) => [
-                    PopupMenuItem(
-                      value: 'about',
-                      child: Text('about'),
-                      height: 40,
-                    )
-                  ])
-        ],
-      ),
-    );
-  }
-
-  Widget swiper(Data data) {
+  Widget swiper(
+    Data data,
+  ) {
     return Container(
-        margin: EdgeInsets.only(top: 5),
+        margin: EdgeInsets.only(top: 15),
         height: MediaQuery.of(context).size.height * .6 -
-            MediaQuery.of(context).padding.top -
-            31,
+            MediaQuery.of(context).padding.top,
         child: Column(
           children: [
             SizedBox(
@@ -116,7 +60,9 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Image.network(
-                      DataRepo().items[widget.id - 1].imageUrl,
+                      widget.id != null
+                          ? DataRepo().items[widget.id - 1].imageUrl
+                          : 'http://www.hizb.org.uk/wp-content/uploads/2017/08/quran-open-05.jpg',
                       fit: BoxFit.fill,
                     ),
                   ),
@@ -204,7 +150,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                           enabledThumbRadius: 8,
                           elevation: 4,
                           pressedElevation: 15),
-                      overlayColor: Colors.white,
+                      overlayColor: Colors.white12,
                       inactiveTrackColor: Colors.grey),
                   child: Slider(
                     onChanged: (value) {
@@ -281,7 +227,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
       BuildContext context}) {
     return Column(
       children: [
-        appBar(context),
+        // appBar(context),
         swiper(data),
         controlInSound(
             isOn: isOn,
@@ -318,58 +264,65 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        // key:GlobalKey(debugLabel: 'l'),
-        backgroundColor: Color(0xFFFFF2F2),
-        body: BlocBuilder<ListenBloc, ListenState>(
-          builder: (ctx, state) {
-            if (state is ListenInitial) {
-              return Text('intial');
-            }
-            if (state is ListenLoading) {
-              return Text('loading');
-            } else if (state is ListenLoaded) {
-              return loaded(
-                  sliderValue: state.sliderValue,
-                  sliderValue1: state.sliderValue1,
-                  position: state.position,
-                  isOn: state.isOn,
-                  data: state.data,
-                  context: ctx);
-            } else if (state is ListenResume) {
-              return loaded(
-                  sliderValue: state.sliderValue,
-                  sliderValue1: state.sliderValue1,
-                  position: state.position,
-                  isOn: state.isOn,
-                  data: state.data,
-                  context: ctx);
-            } else if (state is ListenNextSura) {
-              // nextSura();
-              return loaded(
-                  sliderValue1: null,
-                  isOn: true,
-                  position: Duration.zero,
-                  sliderValue: 0,
-                  context: ctx);
-            }
-            if (state is ErrorInListen) {
-              return Container(
-                child: Center(
-                  child: RaisedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: Text('go back'),
-                  ),
-                ),
-              );
-            } else {
-              return Container();
-            }
-          },
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.black),
+        elevation: 0,
+        title: Text(
+          'Now playing',
+          style: TextStyle(fontSize: 16, color: Colors.black),
         ),
+        backgroundColor: Color(0xFFFFF2F2),
+        centerTitle: true,
+      ),
+      // key:GlobalKey(debugLabel: 'l'),
+      backgroundColor: Color(0xFFFFF2F2),
+      body: BlocBuilder<ListenBloc, ListenState>(
+        builder: (ctx, state) {
+          if (state is ListenInitial) {
+            return Center(child: Text('intial'));
+          }
+          if (state is ListenLoading) {
+            return Text('loading');
+          } else if (state is ListenLoaded) {
+            return loaded(
+                sliderValue: state.sliderValue,
+                sliderValue1: state.sliderValue1,
+                position: state.position,
+                isOn: state.isOn,
+                data: state.data,
+                context: ctx);
+          } else if (state is ListenResume) {
+            return loaded(
+                sliderValue: state.sliderValue,
+                sliderValue1: state.sliderValue1,
+                position: state.position,
+                isOn: state.isOn,
+                data: state.data,
+                context: ctx);
+          } else if (state is ListenNextSura) {
+            return loaded(
+                sliderValue1: null,
+                isOn: true,
+                position: Duration.zero,
+                sliderValue: 0,
+                context: ctx);
+          }
+          if (state is ErrorInListen) {
+            return Container(
+              child: Center(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('go back'),
+                ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }

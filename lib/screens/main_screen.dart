@@ -1,6 +1,10 @@
+import 'dart:math';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:move_to_background/move_to_background.dart';
 import 'package:quran_listienning/bloc/main/main_screen_bloc.dart';
 import 'package:quran_listienning/data/models/ayah.dart';
@@ -8,6 +12,7 @@ import 'package:quran_listienning/data/models/azkar.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
 import 'package:quran_listienning/data/repo.dart';
 import 'package:quran_listienning/data/sheikh.dart';
+import 'package:quran_listienning/screens/about_screen.dart';
 import 'package:quran_listienning/screens/listen.dart';
 import 'package:quran_listienning/widgets/mood_ui.dart';
 import 'package:quran_listienning/widgets/play_list_ui.dart';
@@ -17,59 +22,61 @@ import '../searchBar.dart';
 import 'choose_sura.dart';
 
 class MyHomePage extends StatelessWidget {
-  Widget appBar(BuildContext context) {
+  List<Data> ayaItemsData = [];
+  Widget appBar(BuildContext ctx) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: IconButton(icon: Icon(Icons.notifications), onPressed: () {}),
+          child: IconButton(
+              icon: Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(ctx).openDrawer();
+              }),
         ),
         Expanded(
-          child: Card(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                  child: Text(
-                    'Search',
-                    style: Theme.of(context).textTheme.caption,
+          child: GestureDetector(
+            onTap: () {
+              showSearch(context: ctx, delegate: DataSearch(DataRepo().items));
+            },
+            child: Card(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 10, horizontal: 10),
+                    child: Text(
+                      'Search',
+                      style: Theme.of(ctx).textTheme.caption,
+                    ),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    showSearch(
-                        context: context,
-                        delegate: DataSearch(DataRepo().items));
-                  },
-                  icon: Icon(
-                    Icons.search,
-                  ),
-                )
-              ],
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(
-                25,
+                  IconButton(
+                    onPressed: () {
+                      showSearch(
+                          context: ctx, delegate: DataSearch(DataRepo().items));
+                    },
+                    icon: Icon(
+                      Icons.search,
+                    ),
+                  )
+                ],
               ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(
+                  25,
+                ),
+              ),
+              color: Colors.white,
             ),
-            color: Colors.white,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(8.0),
-          child: Container(
-            width: 50,
-            height: 60,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(15),
-              image: DecorationImage(
-                image: NetworkImage(
-                    'http://3.bp.blogspot.com/-zy5M-E-npPI/VHVPboV784I/AAAAAAAACu0/o4-nzUappSQ/s1600/sarah%2Bvaughan.png'),
-              ),
-            ),
+          child: Icon(
+            FontAwesomeIcons.headphones,
+            size: 30,
           ),
         )
       ],
@@ -95,8 +102,33 @@ class MyHomePage extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Row(
                   children: [
-                    MoodUi(
-                      imageNumber: index + 1,
+                    GestureDetector(
+                      child: MoodUi(
+                        imageNumber: index + 1,
+                      ),
+                      onTap: () {
+                        ayaItemsData.clear();
+                        Random random = Random();
+                        for (int i = 0; i < 5; i++) {
+                          final int randomNumber = random.nextInt(6236);
+                          ayaItemsData.add(
+                            Data(
+                                link:
+                                    'http://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/$randomNumber/high',
+                                sora: 'ارح قلبك ',
+                                id: randomNumber.toString(),
+                                readerName: 'مشاري العفاسي '),
+                          );
+                        }
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (
+                              context,
+                            ) =>
+                                Listen(ayaItemsData, null, index),
+                          ),
+                        );
+                      },
                     ),
                     SizedBox(
                       width: 24,
@@ -127,7 +159,7 @@ class MyHomePage extends StatelessWidget {
                     title: items[index].name,
                     imageUrl: items[index].imageUrl,
                     id: items[index].id,
-                    onTap: toNavigat);
+                    onTap: toNavigate);
               },
               itemCount: items.length,
               scrollDirection: Axis.horizontal,
@@ -184,69 +216,103 @@ class MyHomePage extends StatelessWidget {
   }
 
   Widget azkarBuild(AzkarData azkarData) {
+    print(azkarData.items[1].readerImg);
     return Expanded(
-      child: ListView.builder(
-          itemCount: azkarData.items.length,
-          itemBuilder: (context, i) => Container(
-                margin: EdgeInsets.all(15),
-                height: 300,
-                child: GestureDetector(
-                  onTap: () {
-                    final List<Data> dataAzkar = azkarData.items
-                        .map(
-                          (e) => Data(
-                              link: azkarData.items[i].link,
-                              readerName: azkarData.items[i].readerName,
-                              sora: azkarData.items[i].name,
-                              id: '1'),
-                        )
-                        .toList();
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => Listen(dataAzkar, 1, i),
-                      ),
-                    );
-                  },
-                  child: Stack(
-                    overflow: Overflow.visible,
-                    children: [
-                      Card(
-                        elevation: 5,
-                        shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(25))),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.all(Radius.circular(25)),
-                          child: Image.network(
-                            DataRepo().items[i].imageUrl,
-                            fit: BoxFit.fitWidth,
+      child: AnimationLimiter(
+        child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisSpacing: 10,
+                childAspectRatio: 7 / 6,
+                mainAxisSpacing: 1,
+                crossAxisCount: 2),
+            itemCount: azkarData.items.length,
+            itemBuilder: (context, i) => AnimationConfiguration.staggeredGrid(
+                  duration: const Duration(milliseconds: 375),
+                  columnCount: azkarData.items.length,
+                  position: i,
+                  child: SlideAnimation(
+                    verticalOffset: 50.0,
+                    child: FlipAnimation(
+                      child: Container(
+                        margin: EdgeInsets.all(15),
+                        height: 300,
+                        child: GestureDetector(
+                          onTap: () {
+                            final List<Data> dataAzkar = azkarData.items
+                                .map(
+                                  (e) => Data(
+                                      link: azkarData.items[i].link,
+                                      readerName: azkarData.items[i].readerName,
+                                      sora: azkarData.items[i].name,
+                                      id: '1'),
+                                )
+                                .toList();
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    Listen(dataAzkar, null, i),
+                              ),
+                            );
+                          },
+                          child: Stack(
+                            overflow: Overflow.visible,
+                            children: [
+                              Card(
+                                elevation: 5,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(25),
+                                  ),
+                                  child: Image.asset(
+                                    'images/Azkar.jpg',
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 40,
+                                right: 0,
+                                top: 85,
+                                child: Card(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(15),
+                                    ),
+                                  ),
+                                  elevation: 5,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(1.0),
+                                    child: Wrap(
+                                      direction: Axis.vertical,
+                                      alignment: WrapAlignment.center,
+                                      crossAxisAlignment:
+                                          WrapCrossAlignment.center,
+                                      textDirection: TextDirection.rtl,
+                                      children: [
+                                        Text(
+                                          azkarData.items[i].name,
+                                          style: TextStyle(
+                                            fontSize: 17,
+                                          ),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
                         ),
                       ),
-                      Positioned(
-                        left: 260,
-                        right: 0,
-                        top: 150,
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15),
-                            ),
-                          ),
-                          elevation: 10,
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              azkarData.items[i].name,
-                              style: TextStyle(fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
+                    ),
                   ),
-                ),
-              )),
+                )),
+      ),
     );
   }
 
@@ -259,7 +325,7 @@ class MyHomePage extends StatelessWidget {
     }
   }
 
-  toNavigat(int id, BuildContext context) {
+  toNavigate(int id, BuildContext context) {
     BlocProvider.of<MainScreenBloc>(context).add(NavigteTo(id));
   }
 
@@ -271,11 +337,47 @@ class MyHomePage extends StatelessWidget {
           return false;
         },
         child: Scaffold(
+          drawer: Drawer(
+            child: ListView(
+              children: [
+                DrawerHeader(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'images/quran_icon.png',
+                        width: 70,
+                        height: 80,
+                      ),
+                      Text('قرآ نـــي')
+                    ],
+                  ),
+                  decoration: BoxDecoration(color: Colors.white),
+                ),
+                ListTile(
+                  onTap: () {
+                    // Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => AboutScreen(),
+                      ),
+                    );
+                  },
+                  title: Text(
+                    'حول البرنامج',
+                    textDirection: TextDirection.rtl,
+                  ),
+                  leading: Icon(Icons.all_inclusive_outlined),
+                )
+              ],
+            ),
+          ),
           backgroundColor: Color(0xFFFFF2F2),
           body: SafeArea(
             child: Column(
               children: [
-                appBar(context),
+                Builder(builder: (context) => appBar(context)),
                 buildMood(),
                 SizedBox(
                   height: 24,
@@ -326,7 +428,6 @@ class MyHomePage extends StatelessWidget {
                         BlocConsumer<MainScreenBloc, MainScreenState>(
                             listener: (ctx, state) {
                           if (state is NavigateToGetData) {
-                            print('object1');
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (ctx) {

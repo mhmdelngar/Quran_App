@@ -33,6 +33,11 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
         add(Triger(event.data[event.index], p));
       });
       //to make time moving
+audioRepo.player.isPlaying.listen((event) {
+  if(event == false){
+    add(PauseAudio());
+  }
+});
     }
 
     if (event is Triger) {
@@ -45,6 +50,7 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     }
     if (event is PauseAudio) {
       await audioRepo.pauseAudio();
+      print('is ${audioRepo.isOn}');
       yield ListenLoaded(
           isOn: audioRepo.isOn,
           position: audioRepo.position,
@@ -72,21 +78,9 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     }
     if (event is ChangePosition) {
       await audioRepo.onSeekToAnewPosition(event.newValue);
-      yield ListenLoaded(
-          isOn: audioRepo.isOn,
-          position: audioRepo.position,
-          sliderValue1: audioRepo.sliderValue1,
-          sliderValue: audioRepo.sliderValue,
-          data: audioRepo.quranData);
     }
     if (event is ResumeAudio) {
       await audioRepo.onResume();
-      yield ListenLoaded(
-          isOn: audioRepo.isOn,
-          position: audioRepo.position,
-          sliderValue1: audioRepo.sliderValue1,
-          sliderValue: audioRepo.sliderValue,
-          data: audioRepo.quranData);
     }
     if (event is Error) {
       yield ErrorInListen();

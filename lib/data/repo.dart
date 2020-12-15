@@ -22,8 +22,6 @@ class DataRepo {
       final response = await http.get('https://gad25.xyz/Quran/Azkar.php');
 
       if (response.statusCode == 200) {
-        print(AzkarData.fromJson(jsonDecode(response.body)));
-        // List<Azkar> azkar = jsonDecode(response.body);
         return AzkarData.fromJson(jsonDecode(response.body));
       }
     } catch (e) {
@@ -36,7 +34,7 @@ class DataRepo {
     Sheikh(
       id: 1,
       imageUrl:
-          'https://yt3.ggpht.com/a-/AAuE7mAXNaDhg0us_dqeAKYk3Kqs52A7y2wCz6MTjQ=s900-mo-c-c0xffffffff-rj-k-no',
+          'https://i1.sndcdn.com/artworks-000026309409-acfg4k-t500x500.jpg',
       name: 'مشارى العفاسى',
     ),
     Sheikh(
@@ -197,11 +195,11 @@ class DataRepo {
   List<Ayah> _ayaItems = [
     Ayah(
         ayahNumper: 262,
-        aya: 'الله نور السموات والارض ....',
+        aya: 'الله لا اله الا هو الحي القيوم ....',
         ayaUrl:
             'http://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/262/high'),
     Ayah(
-        aya: 'يا أهل الكتاب لم تكتمون ....',
+        aya: 'يا أهل الكتاب لم تلبسون  ....',
         ayahNumper: 364,
         ayaUrl:
             'http://cdn.alquran.cloud/media/audio/ayah/ar.alafasy/364/high'),

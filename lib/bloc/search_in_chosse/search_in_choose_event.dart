@@ -10,7 +10,7 @@ class StartSearching extends SearchInChooseEvent {
   StartSearching(this.controller, this.quran);
   @override
   // TODO: implement props
-  List<Object> get props => [controller];
+  List<Object> get props => [controller, quran];
 }
 
 class ThereIsNoSearch extends SearchInChooseEvent {

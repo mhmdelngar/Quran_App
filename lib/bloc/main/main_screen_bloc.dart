@@ -22,13 +22,13 @@ class MainScreenBloc extends Bloc<MainScreenEvent, MainScreenState> {
       yield MainScreenLoading();
       try {
         final azkar = await dataRepo.getAzkar();
+
         yield MainScreenAzkar(azkar);
       } catch (e) {
         yield MainScreenError();
       }
     }
     if (event is ChangeToQuran) {
-      yield MainScreenLoading();
       List<Sheikh> items = dataRepo.items;
       List<Ayah> ayaItems = dataRepo.ayaItems;
       yield MainScreenQuran(items, ayaItems);

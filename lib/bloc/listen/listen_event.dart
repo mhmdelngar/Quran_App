@@ -11,7 +11,7 @@ class PlayAudio extends ListenEvent {
   PlayAudio(this.data, this.index);
 
   @override
-  List<Object> get props => [index, this.data];
+  List<Object> get props => [this.index, this.data];
 }
 
 class Triger extends ListenEvent {

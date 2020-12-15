@@ -10,6 +10,16 @@ class MoodUi extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      width: 60,
+      height: 60,
+      decoration: BoxDecoration(
+        color: Color(0xFFFFF2F2),
+        shape: BoxShape.circle,
+        border: Border.all(
+          style: BorderStyle.values[1],
+          color: Colors.red[100],
+        ),
+      ),
       child: Container(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
@@ -31,16 +41,6 @@ class MoodUi extends StatelessWidget {
           // border: Border.all(
           //   color: Color(0xFFFF7F61),
           // ),
-        ),
-      ),
-      width: 60,
-      height: 60,
-      decoration: BoxDecoration(
-        color: Color(0xFFFFF2F2),
-        shape: BoxShape.circle,
-        border: Border.all(
-          style: BorderStyle.values[1],
-          color: Colors.red[100],
         ),
       ),
     );

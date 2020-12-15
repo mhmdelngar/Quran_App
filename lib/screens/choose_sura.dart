@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:quran_listienning/bloc/chooseSura/choose_sura_bloc.dart';
 import 'package:quran_listienning/bloc/search_in_chosse/search_in_choose_bloc.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
@@ -19,8 +20,9 @@ class ChooseSura extends StatefulWidget {
 class _ChooseSuraState extends State<ChooseSura> {
   TextEditingController _controller = TextEditingController();
   FocusNode focusNode = FocusNode();
+
   navigateToListen(Quran quran, int index, BuildContext context) {
-    focusNode.unfocus();   //so you can hide keyboard before navigate
+    focusNode.unfocus(); //so you can hide keyboard before navigate
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
       return Listen(quran.data, widget.id, index);
     }));
@@ -42,15 +44,25 @@ class _ChooseSuraState extends State<ChooseSura> {
   }
 
   allData(Quran quran) {
-    return ListView.builder(
-      itemCount: quran.data.length,
-      itemBuilder: (context, index) => ListTileOfSura(
-        onTap: () {
-          navigateToListen(quran, index, context);
-        },
-        index: index,
-        quran: quran,
-      ),
+    return AnimationLimiter(
+      child: ListView.builder(
+          itemCount: quran.data.length,
+          itemBuilder: (context, index) => AnimationConfiguration.staggeredList(
+                position: index,
+                duration: const Duration(milliseconds: 375),
+                child: SlideAnimation(
+                  verticalOffset: 50.0,
+                  child: ScaleAnimation(
+                    child: ListTileOfSura(
+                      onTap: () {
+                        navigateToListen(quran, index, context);
+                      },
+                      index: index,
+                      quran: quran,
+                    ),
+                  ),
+                ),
+              )),
     );
   }
 
@@ -64,31 +76,35 @@ class _ChooseSuraState extends State<ChooseSura> {
               padding: const EdgeInsets.all(15.0),
               child: IconButton(
                 onPressed: () async {
+                  focusNode.unfocus();
                   Navigator.of(context).pop();
                 },
                 icon: Icon(Icons.arrow_back),
               ),
             ),
-            Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextField(
-                  focusNode: focusNode,
-                  decoration: InputDecoration(
-                      filled: true,
-                      fillColor: Colors.white,
-                      hintText: 'ادخل اسم سوره',
-                      hintStyle: TextStyle(color: Colors.grey),
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      suffixIcon: Icon(
-                        Icons.search,
-                        color: Colors.black,
-                      )),
-                  textAlign: TextAlign.right,
-                  controller: _controller,
-                  style: TextStyle(fontSize: 20),
-                ),
+            Container(
+              height: 50,
+              width: MediaQuery.of(context).size.width * .7,
+              child: TextField(
+                focusNode: focusNode,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.white),
+                      borderRadius: BorderRadius.circular(50),
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    hintText: 'ادخل اسم سوره',
+                    hintStyle: TextStyle(color: Colors.grey),
+                    // enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    suffixIcon: Icon(
+                      Icons.search,
+                      color: Colors.black,
+                    )),
+                textAlign: TextAlign.right,
+                controller: _controller,
+                style: TextStyle(fontSize: 15),
               ),
             ),
             SizedBox(
@@ -126,6 +142,7 @@ class _ChooseSuraState extends State<ChooseSura> {
 
   onIniti(BuildContext context, int id) {
     context.read<ChooseSuraBloc>().add(GetAllQuranEvent(readerId: id));
+    // context.read<SearchInChooseBloc>().add(ThereIsNoSearch());
   }
 
   @override
@@ -134,11 +151,16 @@ class _ChooseSuraState extends State<ChooseSura> {
 
     super.initState();
   }
-@override
+
+  @override
   void dispose() {
+    _controller.clear();
+
     focusNode.dispose();
+    _controller.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,18 +178,9 @@ class _ChooseSuraState extends State<ChooseSura> {
               } else if (state is ChooseSuraLoaded) {
                 return buildListOfQuran(state.quran, context);
               } else if (state is ChooseSuraError) {
-                return RefreshIndicator(
-                    onRefresh: () {
-                      onIniti(context, widget.id);
-                      return Future.delayed(Duration.zero);
-                    },
-                    child: ListView(
-                      children: [
-                        Center(
-                          child: Text('error in connecting please retry again'),
-                        ),
-                      ],
-                    ));
+                return Center(
+                  child: Text('error in connecting please retry again'),
+                );
               } else {
                 return Container();
               }

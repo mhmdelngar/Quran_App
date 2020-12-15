@@ -20,8 +20,8 @@ class AudioRepo {
           .map((e) => Audio.network(
                 e.link,
                 metas: Metas(
-                  title: e.sora,
-                  artist: e.readerName,
+                  title: '   ' + e.sora + '  ',
+                  artist: '   ' + e.readerName + '  ',
                   // album: "CountryAlbum",
                   image: MetasImage.asset(
                       "images/musical-note.png"), //can be MetasImage.network
@@ -29,12 +29,21 @@ class AudioRepo {
               ))
           .toList();
 
-      await player.open(Playlist(audios: audio),
-          autoStart: false,
-          loopMode: LoopMode.playlist,
-          showNotification: true,
-          headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
-          notificationSettings: NotificationSettings()); // time to play
+      await player.open(
+        Playlist(audios: audio),
+        autoStart: false,
+        loopMode: LoopMode.playlist,
+        showNotification: true,
+        headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
+        notificationSettings:
+            NotificationSettings(customPlayPauseAction: (asset) {
+          if (asset.isPlaying.value) {
+            pauseAudio();
+          } else {
+            onResume();
+          }
+        }),
+      ); // time to play
       await player.playlistPlayAtIndex(index);
       player.playlistAudioFinished.listen((event) {
         sliderValue1 = null;
@@ -47,8 +56,10 @@ class AudioRepo {
       });
 
       player.isPlaying.listen((event) {
+        print(event);
         isOn = event;
       });
+
       sliderValue1 = player.current.value.audio.duration; //to get duration
       sliderValue = sliderValue1.inSeconds.toDouble();
     } on HttpException catch (error) {
@@ -81,11 +92,18 @@ class AudioRepo {
         seconds: value.toInt(),
       ),
     );
+    position = Duration(
+      seconds: value.toInt(),
+    );
+    // sliderValue1 = Duration(
+    //   seconds: value.toInt(),
+    // );
+    // sliderValue = value;
   }
-
-  clear() {
-    quranData = null;
-  }
+  //
+  // clear() {
+  //   quranData = null;
+  // }
 
   Future<void> nextAudio() async {
     await player.next();
