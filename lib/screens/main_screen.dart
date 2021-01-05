@@ -12,7 +12,6 @@ import 'package:quran_listienning/data/models/azkar.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
 import 'package:quran_listienning/data/models/sheikh.dart';
 import 'package:quran_listienning/data/repo.dart';
-import 'package:quran_listienning/screens/about_screen.dart';
 import 'package:quran_listienning/screens/listen.dart';
 import 'package:quran_listienning/widgets/mood_ui.dart';
 import 'package:quran_listienning/widgets/play_list_ui.dart';
@@ -23,7 +22,6 @@ import 'choose_sura.dart';
 import 'drawer.dart';
 
 class MyHomePage extends StatelessWidget {
-  List<Data> ayaItemsData = [];
   Widget appBar(BuildContext ctx) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,7 +83,8 @@ class MyHomePage extends StatelessWidget {
   }
 
   randomlyAyah(BuildContext context, int index) {
-    ayaItemsData.clear();
+    List<Data> ayaItemsData = [];
+
     Random random = Random();
     for (int i = 0; i < 5; i++) {
       final int randomNumber = random.nextInt(6236);
@@ -343,95 +342,130 @@ class MyHomePage extends StatelessWidget {
           drawer: DrawerScreen(),
           backgroundColor: Color(0xFFFFF2F2),
           body: SafeArea(
-            child: Column(
+            child: Stack(
               children: [
-                Builder(builder: (context) => appBar(context)),
-                buildMood(),
-                SizedBox(
-                  height: 24,
-                ),
-                Flexible(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(
-                          40,
-                        ),
-                        topRight: Radius.circular(40),
-                      ),
+                Column(
+                  children: [
+                    Builder(builder: (context) => appBar(context)),
+                    buildMood(),
+                    SizedBox(
+                      height: 24,
                     ),
-                    width: double.infinity,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: DefaultTabController(
-                            initialIndex: 0,
-                            length: 2,
-                            child: TabBar(
-                              indicatorColor: Colors.pinkAccent[100],
-                              labelColor: Colors.pinkAccent[100],
-                              indicatorWeight: 0.5,
-                              unselectedLabelColor: Colors.grey[400],
-                              // controller: DefaultTabController(),
-                              onTap: (i) {
-                                onTap(i, context);
-                              },
-                              tabs: [
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'َقــران',
-                                  ),
-                                ),
-                                Text(
-                                  'أذكار',
-                                ),
-                              ],
+                    Flexible(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                              40,
                             ),
+                            topRight: Radius.circular(40),
                           ),
                         ),
-                        BlocConsumer<MainScreenBloc, MainScreenState>(
-                            listener: (ctx, state) {
-                          if (state is NavigateToGetData) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (ctx) {
-                                  return ChooseSura(
-                                    id: state.id,
-                                  );
-                                },
+                        width: double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: DefaultTabController(
+                                initialIndex: 0,
+                                length: 2,
+                                child: TabBar(
+                                  indicatorColor: Colors.pinkAccent[100],
+                                  labelColor: Colors.pinkAccent[100],
+                                  indicatorWeight: 0.5,
+                                  unselectedLabelColor: Colors.grey[400],
+                                  // controller: DefaultTabController(),
+                                  onTap: (i) {
+                                    onTap(i, context);
+                                  },
+                                  tabs: [
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'َقــران',
+                                      ),
+                                    ),
+                                    Text(
+                                      'أذكار',
+                                    ),
+                                  ],
+                                ),
                               ),
-                            );
-                          }
-                        }, builder: (context, state) {
-                          if (state is MainScreenInitial) {
-                            onTap(0, context);
-                            return Center(child: CircularProgressIndicator());
-                          } else if (state is MainScreenLoading) {
-                            return Center(child: CircularProgressIndicator());
-                          } else if (state is MainScreenAzkar) {
-                            return azkarBuild(state.azkarData);
-                          } else if (state is MainScreenQuran) {
-                            return quranBuild(state.items, state.ayaItems);
-                          } else if (state is MainScreenError) {
-                            return Center(
-                              child: Text('error'),
-                            );
-                          } else {
-                            onTap(0, context);
-                            return Container();
-                          }
-                        })
-                      ],
+                            ),
+                            BlocConsumer<MainScreenBloc, MainScreenState>(
+                                listener: (ctx, state) {
+                              if (state is NavigateToGetData) {
+                                Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (ctx) {
+                                      return ChooseSura(
+                                        id: state.id,
+                                      );
+                                    },
+                                  ),
+                                );
+                              }
+                            }, builder: (context, state) {
+                              if (state is MainScreenInitial) {
+                                onTap(0, context);
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (state is MainScreenLoading) {
+                                return Center(
+                                    child: CircularProgressIndicator());
+                              } else if (state is MainScreenAzkar) {
+                                return azkarBuild(state.azkarData);
+                              } else if (state is MainScreenQuran) {
+                                return quranBuild(state.items, state.ayaItems);
+                              } else if (state is MainScreenError) {
+                                return Center(
+                                  child: Text('error'),
+                                );
+                              } else {
+                                onTap(0, context);
+                                return Container();
+                              }
+                            })
+                          ],
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ],
+              overflow: Overflow.visible,
             ),
           ),
         ));
   }
 }
+
+// will be implemented soon
+//   Positioned(
+//     top: MediaQuery.of(context).size.height * .85,
+//     // height: MediaQuery.of(context).size.height * .9,
+//     // width: double.infinity,
+//     child: Container(
+//       color: Colors.green,
+//       width: MediaQuery.of(context).size.width,
+//       height: MediaQuery.of(context).size.height * .15,
+//       child: ListTile(
+//           leading: MoodUi(
+//             imageAsset: 'images/musical-note.png',
+//           ),
+//           title: Text('quran.data[index].sora'),
+//           subtitle: Text('quran.data[index].type'),
+//           trailing: Row(
+//             mainAxisSize: MainAxisSize.min,
+//             children: [
+//               Text('qur'),
+//               SizedBox(
+//                 width: 4,
+//               ),
+//               Icon(Icons.favorite_border)
+//             ],
+//           )),
+//     ),
+//   )

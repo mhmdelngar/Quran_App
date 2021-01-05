@@ -17,7 +17,8 @@ import 'data/serviece/audioRepo.dart';
 void main() {
   SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-  ));
+  )); //to make statusBarColor as the screen
+
   runApp(MyApp());
 }
 
@@ -41,26 +42,24 @@ class MyApp extends StatelessWidget {
           create: (
             context,
           ) =>
-              ListenBloc(AudioRepo(AssetsAudioPlayer())),
+              ListenBloc(
+            AudioRepo(
+              AssetsAudioPlayer(),
+            ),
+          ),
         ),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Quran App',
-        theme: ThemeData(
-          primarySwatch: Colors.blue,
-          // visualDensity: VisualDensity.adaptivePlatformDensity,
-        ),
-        home: SafeArea(
-          child: AnimatedSplashScreen(
-            duration: 1000,
-            splash: 'images/quran_icon.png',
-            splashIconSize: 200,
-            nextScreen: MyHomePage(),
-            splashTransition: SplashTransition.sizeTransition,
-            backgroundColor: Color(0xFFFFF2F2),
-            pageTransitionType: PageTransitionType.fade,
-          ),
+        home: AnimatedSplashScreen(
+          duration: 1000,
+          splash: 'images/quran_icon.png',
+          splashIconSize: 200,
+          nextScreen: MyHomePage(),
+          splashTransition: SplashTransition.sizeTransition,
+          backgroundColor: Color(0xFFFFF2F2),
+          pageTransitionType: PageTransitionType.fade,
         ),
       ),
     );

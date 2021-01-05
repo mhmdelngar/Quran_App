@@ -66,3 +66,10 @@ class ChangePosition extends ListenEvent {
   @override
   List<Object> get props => [newValue];
 }
+
+// class Buffering extends ListenEvent {
+//   Buffering();
+//
+//   @override
+//   List<Object> get props => throw UnimplementedError();
+// }

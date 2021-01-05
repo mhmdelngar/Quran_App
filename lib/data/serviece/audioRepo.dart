@@ -1,10 +1,11 @@
 import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
+import 'package:equatable/equatable.dart';
 
 import '../models/quran_data.dart';
 
-class AudioRepo {
+class AudioRepo extends Equatable {
   double sliderValue = 0;
   Duration sliderValueOnText;
   Duration position = Duration(seconds: 0);
@@ -104,4 +105,10 @@ class AudioRepo {
   Future<void> previousSura() async {
     await player.previous();
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props => [
+        quranData,
+      ];
 }

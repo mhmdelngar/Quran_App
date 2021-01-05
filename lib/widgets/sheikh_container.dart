@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -27,23 +28,41 @@ class ShikhContainer extends StatelessWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
-          child: CircleAvatar(
-            backgroundColor: Colors.white,
-            backgroundImage: NetworkImage(imageUrl),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+            ),
+            child: Stack(
+              fit: StackFit.expand,
               children: [
-                GridTileBar(
-                  backgroundColor: Colors.white70,
-                  title: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Text(
-                      title,
-                      style: TextStyle(color: Colors.black, fontSize: 17),
-                      textAlign: TextAlign.center,
+                CachedNetworkImage(
+                  imageUrl: imageUrl,
+                  imageBuilder: (context, imageProvider) => Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      image: DecorationImage(image: imageProvider),
                     ),
                   ),
-                )
+                  placeholder: (context, url) => Container(),
+                  errorWidget: (context, url, error) =>
+                      Center(child: Icon(Icons.error)),
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    GridTileBar(
+                      backgroundColor: Colors.white70,
+                      title: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(
+                          title,
+                          style: TextStyle(color: Colors.black, fontSize: 17),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ],
             ),
           ),

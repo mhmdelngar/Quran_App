@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 class Quran {
   String message;
   int count;
@@ -27,7 +29,8 @@ class Quran {
   }
 }
 
-class Data {
+// ignore: must_be_immutable
+class Data extends Equatable {
   String id;
   String sora;
   String link;
@@ -59,7 +62,7 @@ class Data {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['id'] = this.id;
     data['sora'] = this.sora;
     data['link'] = this.link;
@@ -70,4 +73,9 @@ class Data {
     data['ayatsNumber'] = this.ayatsNumber;
     return data;
   }
+
+  @override
+  // TODO: implement props
+  List<Object> get props =>
+      [id, sora, link, readerName, pageNumber, type, soraNumber, ayatsNumber];
 }

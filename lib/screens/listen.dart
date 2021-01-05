@@ -8,7 +8,6 @@ import 'package:quran_listienning/bloc/listen/listen_bloc.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
 import 'package:quran_listienning/data/repo.dart';
 import 'package:quran_listienning/widgets/arrow_card.dart';
-import 'package:quran_listienning/widgets/mood_ui.dart';
 
 class Listen extends StatefulWidget {
   final List<Data> data;
@@ -197,9 +196,10 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
             left: 0,
             right: 0,
             top: -30,
-            child: MoodUi(
-              imageNumber: 4,
-            ),
+            // child: MoodUi(
+            //   imageNumber: 4,
+            // ),
+            child: Icon(Icons.favorite_border),
           )
         ],
       ),
