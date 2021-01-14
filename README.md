@@ -1,7 +1,10 @@
 # quran_listienning
 
-A new Flutter application.
-
+Quran App (Flutter+ bloc)+
+Api+
+AudioPlayrs+
+notification+
+complex ui
 ## Getting Started
 
 
