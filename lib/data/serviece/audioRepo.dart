@@ -1,21 +1,30 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:assets_audio_player/assets_audio_player.dart';
-import 'package:equatable/equatable.dart';
 
 import '../models/quran_data.dart';
 
-class AudioRepo extends Equatable {
-  double sliderValue = 0;
-  Duration sliderValueOnText;
-  Duration position = Duration(seconds: 0);
-  bool isOn = false;
+class AudioRepo {
   final AssetsAudioPlayer player;
-  Data quranData;
   AudioRepo(this.player);
 
+  double _sliderValue = 0;
+  Duration _sliderValueOnText = Duration.zero;
+  Duration _position = Duration(seconds: 0);
+  bool _isOn = false;
+  Data _quranData;
+  StreamSubscription stream;
+  StreamSubscription stream1;
+  StreamSubscription stream2;
+
   playAudio(List<Data> data, int index) async {
-    quranData = data[index];
+    //passing the whole list for the package
+    var mood = LoopMode.playlist;
+    if (data.length == 1) {
+      mood = LoopMode.none;
+    }
+    _quranData = data[index];
     try {
       List<Audio> audio = data
           .map((e) => Audio.network(
@@ -33,42 +42,45 @@ class AudioRepo extends Equatable {
       await player.open(
         Playlist(audios: audio),
         autoStart: false,
-        loopMode: LoopMode.playlist,
+        loopMode: mood,
         showNotification: true,
         headPhoneStrategy: HeadPhoneStrategy.pauseOnUnplug,
       ); // time to play
       await player.playlistPlayAtIndex(index);
-      player.playlistAudioFinished.listen((event) {
-        sliderValueOnText = null;
-        sliderValue = 0;
-      });
-      player.current.listen((event) {
-        quranData = data[event.index];
-        sliderValueOnText = player.current.value.audio.duration;
-        sliderValue = sliderValueOnText.inSeconds.toDouble();
-      });
-
-      player.isPlaying.listen((event) {
-        print(event);
-        isOn = event;
-      });
-
-      sliderValueOnText = player.current.value.audio.duration; //to get duration
-      sliderValue = sliderValueOnText.inSeconds.toDouble();
+      listener(
+          data); //setting my listener in this repo (never tr to forget them unclosed)
     } on HttpException catch (error) {
       print(error);
       throw error;
+    } catch (e) {
+      print(e); //overall the package handle the error
     }
   }
 
   pauseAudio() async {
     try {
       await player.pause();
-      position = player.currentPosition.value;
+      _position = player.currentPosition.value;
       print(position);
     } catch (error) {
       print(error);
     }
+  }
+
+  listener(List<Data> data) {
+    stream = player.playlistAudioFinished.listen((event) {
+      _sliderValueOnText = null;
+      _sliderValue = 0;
+    }); //this to make buffer before load the next sura
+    stream1 = player.current.listen((event) {
+      _quranData = data[event.index];
+      _sliderValueOnText = player.current.value.audio.duration;
+      _sliderValue = sliderValueOnText.inSeconds.toDouble();
+    });
+
+    stream2 = player.isPlaying.listen((event) {
+      _isOn = event;
+    });
   }
 
   onResume() async {
@@ -85,18 +97,16 @@ class AudioRepo extends Equatable {
         seconds: value.toInt(),
       ),
     );
-    position = Duration(
+    _position = Duration(
       seconds: value.toInt(),
     );
-    // sliderValue1 = Duration(
-    //   seconds: value.toInt(),
-    // );
-    // sliderValue = value;
   }
-  //
-  // clear() {
-  //   quranData = null;
-  // }
+
+  clearListener() async {
+    await stream.cancel();
+    await stream1.cancel();
+    await stream2.cancel();
+  }
 
   Future<void> nextAudio() async {
     await player.next();
@@ -106,9 +116,23 @@ class AudioRepo extends Equatable {
     await player.previous();
   }
 
-  @override
-  // TODO: implement props
-  List<Object> get props => [
-        quranData,
-      ];
+  Duration get position {
+    return _position;
+  }
+
+  Duration get sliderValueOnText {
+    return _sliderValueOnText;
+  }
+
+  bool get isOn {
+    return _isOn;
+  }
+
+  double get sliderValue {
+    return _sliderValue;
+  }
+
+  Data get quranData {
+    return _quranData;
+  }
 }

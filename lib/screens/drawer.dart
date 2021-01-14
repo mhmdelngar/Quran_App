@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:quran_listienning/screens/favScreen.dart';
 
 import 'about_screen.dart';
 
@@ -29,6 +30,21 @@ class DrawerScreen extends StatelessWidget {
               // Navigator.of(context).pop();
               Navigator.of(context).push(
                 MaterialPageRoute(
+                  builder: (ctx) => FavScreen(),
+                ),
+              );
+            },
+            title: Text(
+              ' المفضله',
+              textDirection: TextDirection.rtl,
+            ),
+            leading: Icon(Icons.favorite),
+          ),
+          ListTile(
+            onTap: () {
+              // Navigator.of(context).pop();
+              Navigator.of(context).push(
+                MaterialPageRoute(
                   builder: (ctx) => AboutScreen(),
                 ),
               );
@@ -38,7 +54,7 @@ class DrawerScreen extends StatelessWidget {
               textDirection: TextDirection.rtl,
             ),
             leading: Icon(Icons.all_inclusive_outlined),
-          )
+          ),
         ],
       ),
     );

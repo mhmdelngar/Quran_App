@@ -17,7 +17,9 @@ class PlayAudio extends ListenEvent {
 class Triger extends ListenEvent {
   final Duration position;
 
-  Triger(this.position);
+  Triger(
+    this.position,
+  );
 
   @override
   List<Object> get props => [position];
@@ -67,9 +69,19 @@ class ChangePosition extends ListenEvent {
   List<Object> get props => [newValue];
 }
 
-// class Buffering extends ListenEvent {
-//   Buffering();
-//
-//   @override
-//   List<Object> get props => throw UnimplementedError();
-// }
+class AddToDataBase extends ListenEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class RemoveFromDataBase extends ListenEvent {
+  @override
+  List<Object> get props => [];
+}
+
+class StopListener extends ListenEvent {
+  StopListener();
+
+  @override
+  List<Object> get props => throw UnimplementedError();
+}

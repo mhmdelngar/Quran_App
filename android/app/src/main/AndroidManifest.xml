@@ -12,7 +12,7 @@
 
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="quran_listienning"
+        android:label="قرآن كريم"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
         <activity

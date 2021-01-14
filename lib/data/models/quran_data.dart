@@ -1,4 +1,7 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
+
+part 'quran_data.g.dart';
 
 class Quran {
   String message;
@@ -30,14 +33,23 @@ class Quran {
 }
 
 // ignore: must_be_immutable
+@HiveType(typeId: 22)
 class Data extends Equatable {
+  @HiveField(0)
   String id;
+  @HiveField(1)
   String sora;
+  @HiveField(2)
   String link;
+  @HiveField(3)
   String readerName;
+  @HiveField(4)
   String pageNumber;
+  @HiveField(5)
   String type;
+  @HiveField(6)
   String soraNumber;
+  @HiveField(7)
   String ayatsNumber;
 
   Data(
@@ -75,7 +87,6 @@ class Data extends Equatable {
   }
 
   @override
-  // TODO: implement props
   List<Object> get props =>
       [id, sora, link, readerName, pageNumber, type, soraNumber, ayatsNumber];
 }

@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 class MoodUi extends StatelessWidget {
   final int imageNumber;
   final String imageAsset;
+  final IconData iconData;
+  final Widget widget;
 
-  MoodUi({this.imageNumber, this.imageAsset});
+  MoodUi({this.imageNumber, this.imageAsset, this.iconData, this.widget});
 
   @override
   Widget build(BuildContext context) {
@@ -23,9 +25,13 @@ class MoodUi extends StatelessWidget {
       child: Container(
         child: Padding(
           padding: const EdgeInsets.all(8.0),
-          child: imageNumber == null
-              ? Image.asset(imageAsset)
-              : Image.asset('images/image$imageNumber.png'),
+          child: widget == null
+              ? iconData != null
+                  ? Icon(iconData)
+                  : imageNumber == null
+                      ? Image.asset(imageAsset)
+                      : Image.asset('images/image$imageNumber.png')
+              : widget,
         ),
         margin: EdgeInsets.all(4),
         width: 35,

@@ -1,15 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:quran_listienning/data/models/quran_data.dart';
 
 import 'mood_ui.dart';
 
-class ListTileOfSura extends StatelessWidget {
+class ListTileOfSuraFav extends StatelessWidget {
   final int index;
-  final Quran quran;
+  final List<dynamic> data;
   final Function onTap;
 
-  const ListTileOfSura({this.index, this.quran, this.onTap});
+  const ListTileOfSuraFav({this.index, this.data, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +17,16 @@ class ListTileOfSura extends StatelessWidget {
       leading: MoodUi(
         imageAsset: 'images/musical-note.png',
       ),
-      title: Text(quran.data[index].sora),
-      subtitle: Text(quran.data[index].type),
+      title: Text(data[index].sora),
+      subtitle: Text(data[index].readerName),
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(quran.data[index].soraNumber),
+          Text(data[index].soraNumber),
           SizedBox(
             width: 4,
           ),
+          // Icon(Icons.)
         ],
       ),
     );

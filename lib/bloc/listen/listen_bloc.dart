@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:quran_listienning/data/hiveDatabase.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
 import 'package:quran_listienning/data/serviece/audioRepo.dart';
 
@@ -10,8 +12,12 @@ part 'listen_state.dart';
 
 class ListenBloc extends Bloc<ListenEvent, ListenState> {
   final AudioRepo audioRepo;
-
-  // AudioPlayer player = AudioPlayer();
+  DataBase dataBase = DataBase();
+  bool isFav;
+  Duration currentPosition;
+  StreamSubscription<Duration> stream;
+  StreamSubscription<bool> stream1;
+  StreamSubscription<Playing> stream2;
 
   ListenBloc(this.audioRepo) : super(ListenInitial());
 
@@ -20,17 +26,8 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     ListenEvent event,
   ) async* {
     if (event is PlayAudio) {
-      Duration currentPosition;
       if (event.data[event.index] == audioRepo.quranData) {
-        audioRepo.player.currentPosition.listen((position) {
-          currentPosition = position;
-          add(Triger(position));
-        }); //to make time moving
-        audioRepo.player.isPlaying.listen((event) {
-          if (event == false) {
-            add(Triger(currentPosition));
-          }
-        });
+        audioRepo.listener(event.data);
       } //so it can complete from the same point when enter the same soura until i can figure out how to do it with bloc
       else {
         yield ListenLoaded(
@@ -38,40 +35,57 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
             position: Duration.zero,
             sliderValue1: null,
             sliderValue: 0,
-            data: event.data[event.index]); // null value to Show buffering
-
+            data: event.data[event.index],
+            isFav: false); // null value to Show buffering
+        isFav = await dataBase.checkFav(event.data[event.index]);
         await audioRepo.playAudio(event.data, event.index);
-
-        audioRepo.player.currentPosition.listen((position) {
-          currentPosition = position;
-          add(Triger(position));
-        }); //to make time moving
-        audioRepo.player.isPlaying.listen((event) {
-          if (event == false) {
-            add(Triger(currentPosition));
-          }
-        });
       }
+      stream = audioRepo.player.currentPosition.listen((position) {
+        currentPosition = position;
+        print(position);
+        print(audioRepo.sliderValue);
+        add(Triger(position));
+      }); //to make time moving
+      stream1 = audioRepo.player.isPlaying.listen((event) {
+        if (event == false) {
+          add(Triger(currentPosition));
+        }
+      });
+      stream2 = audioRepo.player.current.listen((event) async {
+        isFav = await dataBase.checkFav(audioRepo.quranData);
+      });
     }
 
     if (event is Triger) {
       yield ListenLoaded(
-          isOn: audioRepo.isOn,
-          position: event.position,
-          sliderValue1: audioRepo.sliderValueOnText,
-          sliderValue: audioRepo.sliderValue,
-          data: audioRepo.quranData);
+        isOn: audioRepo.isOn,
+        position: event.position,
+        sliderValue1: audioRepo.sliderValueOnText,
+        sliderValue: audioRepo.sliderValue,
+        data: audioRepo.quranData,
+        isFav: isFav,
+      );
+    }
+    if (event is AddToDataBase) {
+      isFav = true;
+      Data data = audioRepo.quranData;
+      dataBase.addFav(data);
+      if (!audioRepo.player.isPlaying.value) {
+        add(Triger(currentPosition));
+      }
     }
     if (event is PauseAudio) {
       await audioRepo.pauseAudio();
     } //pause Audio
     if (event is NextSura) {
       yield ListenLoaded(
-          isOn: audioRepo.isOn,
-          position: Duration.zero,
-          sliderValue1: null,
-          sliderValue: 0,
-          data: audioRepo.quranData);
+        isOn: audioRepo.isOn,
+        position: Duration.zero,
+        sliderValue1: null,
+        sliderValue: 0,
+        data: audioRepo.quranData,
+        isFav: isFav,
+      );
       await audioRepo.nextAudio();
     }
     if (event is PreviousSura) {
@@ -80,7 +94,8 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
           position: Duration.zero,
           sliderValue1: null,
           sliderValue: 0,
-          data: audioRepo.quranData);
+          data: audioRepo.quranData,
+          isFav: isFav);
       await audioRepo.previousSura();
     }
     if (event is ChangePosition) {
@@ -92,8 +107,31 @@ class ListenBloc extends Bloc<ListenEvent, ListenState> {
     if (event is Error) {
       yield ErrorInListen();
     }
-    // if (event is Buffering) {
-    //
-    // }
+
+    if (event is RemoveFromDataBase) {
+      isFav = false;
+      dataBase.removeFavItem(audioRepo.quranData);
+      if (!audioRepo.player.isPlaying.value) {
+        print('is that right' + isFav.toString());
+        add(Triger(currentPosition));
+      }
+    }
+    if (event is StopListener) {
+      await audioRepo.clearListener();
+      await stream.cancel();
+      await stream1.cancel();
+      await stream2.cancel();
+    }
+
+    // close();
+  }
+
+  @override
+  close() async {
+    await stream.cancel();
+    await stream1.cancel();
+    await stream2.cancel();
+
+    super.close();
   }
 }

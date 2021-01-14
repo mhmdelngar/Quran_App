@@ -5,7 +5,7 @@ description: A new Flutter application.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
 
-version: 1.0.1+2
+version: 1.1.0+3
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -30,8 +30,14 @@ dependencies:
   url_launcher: ^5.7.10
   font_awesome_flutter: ^8.10.1
   cached_network_image: ^2.5.0
+  hive: ^1.4.4+1
+  hive_flutter: ^0.3.1
+  path_provider: ^1.6.24
+  like_button: ^1.0.4
 
 dev_dependencies:
+  hive_generator: ^0.8.2
+  build_runner: ^1.10.11
   flutter_test:
     sdk: flutter
 

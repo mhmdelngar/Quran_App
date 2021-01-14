@@ -5,7 +5,7 @@ import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:quran_listienning/bloc/chooseSura/choose_sura_bloc.dart';
 import 'package:quran_listienning/bloc/search_in_chosse/search_in_choose_bloc.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
-import 'package:quran_listienning/screens/listen.dart';
+import 'package:quran_listienning/screens/listenScreen.dart';
 import 'package:quran_listienning/widgets/listTileOfSura.dart';
 
 class ChooseSura extends StatefulWidget {
@@ -21,10 +21,10 @@ class _ChooseSuraState extends State<ChooseSura> {
   TextEditingController _controller = TextEditingController();
   FocusNode focusNode = FocusNode();
 
-  navigateToListen(Quran quran, int index, BuildContext context) {
+  navigateToListen(Quran quran, int index, BuildContext context) async {
     focusNode.unfocus(); //so you can hide keyboard before navigate
 
-    Navigator.of(context).push(
+    await Navigator.of(context).push(
       MaterialPageRoute(
         builder: (context) {
           return Listen(quran.data, widget.id, index);
@@ -152,7 +152,6 @@ class _ChooseSuraState extends State<ChooseSura> {
 
   onIniti(BuildContext context, int id) {
     context.read<ChooseSuraBloc>().add(GetAllQuranEvent(readerId: id));
-    // context.read<SearchInChooseBloc>().add(ThereIsNoSearch());
   }
 
   @override

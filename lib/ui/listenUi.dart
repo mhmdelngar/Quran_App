@@ -1,38 +1,25 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:like_button/like_button.dart';
 import 'package:quran_listienning/bloc/listen/listen_bloc.dart';
 import 'package:quran_listienning/data/models/quran_data.dart';
 import 'package:quran_listienning/data/repo.dart';
 import 'package:quran_listienning/widgets/arrow_card.dart';
+import 'package:quran_listienning/widgets/mood_ui.dart';
 
-class Listen extends StatefulWidget {
-  final List<Data> data;
+class ListenUi {
+  final ListenBloc _listenBloc;
+  final BuildContext context;
   final int id;
-  int index;
-
-  Listen(this.data, this.id, this.index);
-
-  @override
-  _ListenState createState() => _ListenState();
-}
-
-class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
-  AnimationController _controller;
-  Animation animation;
-
-  pauseAudio() async {}
+  final hieght;
+  ListenUi(this._listenBloc, this.context, this.id, this.hieght);
 
   onSeekToAnewPosition(double value) {
-    BlocProvider.of<ListenBloc>(context).add(ChangePosition(newValue: value));
+    _listenBloc.add(ChangePosition(newValue: value));
   }
 
-  Widget contentDetail(
-    Data data,
-  ) {
+  Widget contentDetail(Data data) {
     return Container(
         margin: EdgeInsets.only(top: 15),
         height: MediaQuery.of(context).size.height * .6 -
@@ -40,7 +27,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
         child: Column(
           children: [
             SizedBox(
-              height: animation.value,
+              height: hieght,
             ),
             Container(
               decoration: BoxDecoration(
@@ -59,8 +46,8 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                     decoration:
                         BoxDecoration(borderRadius: BorderRadius.circular(20)),
                     child: Image.network(
-                      widget.id != null
-                          ? DataRepo().items[widget.id - 1].imageUrl
+                      id != null
+                          ? DataRepo().items[id - 1].imageUrl
                           : 'http://www.hizb.org.uk/wp-content/uploads/2017/08/quran-open-05.jpg',
                       fit: BoxFit.fill,
                     ),
@@ -89,11 +76,22 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
         ));
   }
 
+  Future<bool> onLikeButtonTapped(bool isLiked) async {
+    print('working');
+    if (!isLiked) {
+      _listenBloc.add(AddToDataBase());
+    } else {
+      _listenBloc.add(RemoveFromDataBase());
+    }
+    return true;
+  }
+
   Widget controlInSound(
       {double sliderValue,
       Duration sliderValue1,
       Duration position,
-      bool isOn}) {
+      bool isOn,
+      bool isFav}) {
     return Expanded(
       child: Stack(
         overflow: Overflow.visible,
@@ -156,7 +154,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                       onSeekToAnewPosition(value);
                     },
                     min: 0,
-                    max: sliderValue ?? 1,
+                    max: sliderValue ?? 0,
                     value: position.inSeconds.toDouble() ?? 0,
                     // value: position.inSeconds.toDouble(),
                   ),
@@ -176,10 +174,8 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
                                 color: Colors.white),
                             onPressed: () {
                               isOn
-                                  ? context.read<ListenBloc>().add(PauseAudio())
-                                  : context
-                                      .read<ListenBloc>()
-                                      .add(ResumeAudio());
+                                  ? _listenBloc.add(PauseAudio())
+                                  : _listenBloc.add(ResumeAudio());
                             }),
                         backgroundColor: Color(0xFF393b4a)),
                     ArrowCard(
@@ -196,10 +192,14 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
             left: 0,
             right: 0,
             top: -30,
-            // child: MoodUi(
-            //   imageNumber: 4,
-            // ),
-            child: Icon(Icons.favorite_border),
+            child: MoodUi(
+              widget: LikeButton(
+                isLiked: isFav,
+                onTap: (issliked) {
+                  return onLikeButtonTapped(issliked);
+                },
+              ),
+            ),
           )
         ],
       ),
@@ -207,15 +207,11 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
   }
 
   nextSura() {
-    BlocProvider.of<ListenBloc>(
-      context,
-    ).add(NextSura());
+    _listenBloc.add(NextSura());
   }
 
   previousSura() {
-    BlocProvider.of<ListenBloc>(
-      context,
-    ).add(PreviousSura());
+    _listenBloc.add(PreviousSura());
   }
 
   Widget loaded(
@@ -224,6 +220,7 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
       Duration position,
       bool isOn,
       Data data,
+      bool isFav,
       BuildContext context}) {
     return Column(
       children: [
@@ -233,81 +230,9 @@ class _ListenState extends State<Listen> with SingleTickerProviderStateMixin {
             isOn: isOn,
             position: position,
             sliderValue1: sliderValue1,
-            sliderValue: sliderValue),
+            sliderValue: sliderValue,
+            isFav: isFav),
       ],
-    );
-  }
-
-  @override
-  void initState() {
-    _controller =
-        AnimationController(duration: const Duration(seconds: 1), vsync: this);
-    animation = Tween<double>(begin: 100, end: 0).animate(_controller)
-      ..addListener(() {
-        setState(() {});
-      });
-    _controller.forward();
-    Future.delayed(Duration.zero).then((value) {
-      return BlocProvider.of<ListenBloc>(
-        context,
-      ).add(PlayAudio(widget.data, widget.index));
-    });
-
-    super.initState();
-  }
-
-  @override
-  Future<void> dispose() async {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.black),
-        elevation: 0,
-        title: Text(
-          'Now playing',
-          style: TextStyle(fontSize: 16, color: Colors.black),
-        ),
-        backgroundColor: Color(0xFFFFF2F2),
-        centerTitle: true,
-      ),
-      // key:GlobalKey(debugLabel: 'l'),
-      backgroundColor: Color(0xFFFFF2F2),
-      body: BlocBuilder<ListenBloc, ListenState>(
-        builder: (ctx, state) {
-          if (state is ListenInitial) {
-            return Center(child: Text('initial'));
-          }
-          if (state is ListenLoading) {
-            return Text('loading');
-          } else if (state is ListenLoaded) {
-            return loaded(
-                sliderValue: state.sliderValue,
-                sliderValue1: state.sliderValue1,
-                position: state.position,
-                isOn: state.isOn,
-                data: state.data,
-                context: ctx);
-          } else if (state is ErrorInListen) {
-            return Container(
-              child: Center(
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                  child: Text('go back'),
-                ),
-              ),
-            );
-          } else {
-            return Container();
-          }
-        },
-      ),
     );
   }
 }

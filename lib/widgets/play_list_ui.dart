@@ -25,11 +25,9 @@ class PlayListUi extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Text('2.25'),
             SizedBox(
               width: 4,
             ),
-            Icon(Icons.favorite_border)
           ],
         ));
   }

@@ -32,17 +32,20 @@ class ListenLoaded extends ListenState {
 
   final Duration position;
   final bool isOn;
+  final bool isFav;
   final Data data;
 
   @override
-  List<Object> get props => [sliderValue1, isOn, position, this.data];
+  List<Object> get props =>
+      [sliderValue1, sliderValue, isOn, position, data, isFav];
 
   const ListenLoaded(
       {this.data,
       this.sliderValue,
       this.sliderValue1,
       this.position,
-      this.isOn})
+      this.isOn,
+      this.isFav})
       : super();
 }
 
