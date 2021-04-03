@@ -94,8 +94,7 @@ class ListenUi {
       bool isFav}) {
     return Expanded(
       child: Stack(
-        overflow: Overflow.visible,
-        children: [
+        clipBehavior: Clip.none, children: [
           Container(
             width: double.infinity,
             decoration: BoxDecoration(

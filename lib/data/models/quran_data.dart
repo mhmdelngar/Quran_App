@@ -36,21 +36,21 @@ class Quran {
 @HiveType(typeId: 22)
 class Data extends Equatable {
   @HiveField(0)
-  String id;
+  var id;
   @HiveField(1)
-  String sora;
+  var sora;
   @HiveField(2)
-  String link;
+  var link;
   @HiveField(3)
-  String readerName;
+  var readerName;
   @HiveField(4)
-  String pageNumber;
+  var pageNumber;
   @HiveField(5)
-  String type;
+  var type;
   @HiveField(6)
-  String soraNumber;
+  var soraNumber;
   @HiveField(7)
-  String ayatsNumber;
+  var ayatsNumber;
 
   Data(
       {this.id,

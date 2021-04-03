@@ -23,7 +23,7 @@ class ListTileOfSura extends StatelessWidget {
       trailing: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(quran.data[index].soraNumber),
+          Text(quran.data[index].soraNumber.toString()),
           SizedBox(
             width: 4,
           ),

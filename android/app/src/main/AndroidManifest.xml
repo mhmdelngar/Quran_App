@@ -11,10 +11,12 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
+
         android:name="io.flutter.app.FlutterApplication"
         android:label="قرآن كريم"
         android:icon="@mipmap/ic_launcher"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
@@ -49,5 +51,7 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+        android:name="androidx.multidex.MultiDexApplication" >
+
     </application>
 </manifest>
